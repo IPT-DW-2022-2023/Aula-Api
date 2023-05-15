@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApplication1.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("WeatherForecast")]
     public class WeatherForecastController : ControllerBase
     {
 
@@ -17,20 +17,26 @@ namespace WebApplication1.Controllers
             new WeatherForecast { Date = DateTime.Now.AddDays(5), Summary="Polo Norte", TemperatureC=0, Id=6},
         };
 
+        private static ILogger _logger;
+
 
         public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
-
+            _logger = logger;
         }
 
         [HttpGet]
         public ActionResult Get()
         {
+            _logger.LogWarning("Entrou no método Get");
             List<WeatherSimple> lista = new List<WeatherSimple>();
+
             _previsoes.ForEach((p) =>
             {
                 lista.Add(new WeatherSimple { Date = p.Date, Id = p.Id });
             });
+
+            _logger.LogWarning("Saiu do método Get");
             return Ok(lista);
         }
 
@@ -41,6 +47,7 @@ namespace WebApplication1.Controllers
 
             if (weatherForecast == null)
             {
+                _logger.LogError("Erro porque o id não é válido "+id+"!");
                 return NotFound();
             }
 
